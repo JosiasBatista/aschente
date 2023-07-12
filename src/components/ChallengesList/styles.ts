@@ -63,7 +63,8 @@ export const styles = StyleSheet.create({
   challengeTitle: {
     fontFamily: THEME.FONT_FAMILY.BOLD,
     fontSize: THEME.FONT_SIZE.LG,
-    color: THEME.COLORS.WHITE_TEXT
+    color: THEME.COLORS.WHITE_TEXT,
+    textAlign: 'center'
   },
 
   blackTitle: {

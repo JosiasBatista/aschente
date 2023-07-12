@@ -11,6 +11,8 @@ import { Challenge, ChallengeEnrollment, enrollUserInChallenge, getChallengeEnro
 import { THEME } from '../../theme';
 import UserContext from '../../context/UserContext';
 import { Button } from '../../components/Button';
+import Toast from 'react-native-root-toast';
+import ChallengeEnrollContext from '../../context/ChallengeEnrollContext';
 
 interface ChallengeDay {
   dayNumber: number,
@@ -20,15 +22,10 @@ interface ChallengeDay {
 
 export function ShowChallenge() {
   const { userRegistered } = useContext(UserContext);
-  const [challengeEnrollment, setChallengeEnrollment] = useState<ChallengeEnrollment | null>({
-    challengeId: '',
-    currentDay: 0,
-    percentage: 0,
-    userEmail: userRegistered.email,
-    enrollmentActivities: []
-  });
+  const { challengeEnrollment: userEnrolled } = useContext(ChallengeEnrollContext); 
+  const [challengeEnrollment, setChallengeEnrollment] = useState<ChallengeEnrollment>();
   const [days, setDays] = useState<ChallengeDay[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [index, setIndex] = useState<number | null>(null);
   const listRef = useRef<FlatList>(null);
   const waveRef = useRef<unknown>(null);
@@ -38,15 +35,12 @@ export function ShowChallenge() {
   const { challenge } = route.params as { challenge: Challenge }; 
 
   useEffect(() => {
+    if (userEnrolled?.challengeId == challenge.id) {
+      setChallengeEnrollment(userEnrolled || null)
+    } else {
+      getChallengeEnrollment(userRegistered.email, challenge.id, (value) => setChallengeEnrollment(value));
+    }
     mountChallengeDays(challenge.days);
-
-    getChallengeEnrollment(userRegistered.email, challenge.id).then((challengeEnroll) => {
-      setChallengeEnrollment(challengeEnroll)
-    }).catch(() => {
-      setChallengeEnrollment(null)
-    }).finally(() => {
-      setLoading(false)
-    })
   }, [])
 
   useEffect(() => {
@@ -121,11 +115,22 @@ export function ShowChallenge() {
   const makeEnrollment = () => {
     setLoading(true);
     enrollUserInChallenge(userRegistered.email, challenge.id, challenge.activities).then((response) => {
-      if (response) {
-        setChallengeEnrollment(response)
+      if (!response) {
+        showErrorMessageInSubscription();
+      } else {
       }
-    }).finally(() => {
+    })
+    .catch(() => {
+      showErrorMessageInSubscription();
+    })
+    .finally(() => {
       setLoading(false);
+    })
+  }
+
+  const showErrorMessageInSubscription = () => {
+    Toast.show("Erro na inscrição", {
+      duration: Toast.durations.LONG
     })
   }
 
@@ -139,8 +144,9 @@ export function ShowChallenge() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Header />  
+      
       <View style={styles.challengeHeader}>
-        <Header />
         {challenge.difficulty == "pawn" && <FontAwesome name="chess-pawn" color="#D6D5D5" size={190} style={styles.challengeIcon} />}
         {challenge.difficulty == "rook" && <FontAwesome name="chess-rook" color="#D6D5D5" size={190} style={styles.challengeIcon} />}
         {challenge.difficulty == "king" && <FontAwesome name="chess-king" color="#D6D5D5" size={190} style={styles.challengeIcon} />}
@@ -160,7 +166,7 @@ export function ShowChallenge() {
             ]}
             animated={true}
           />
-          <Text style={styles.percentageNum}>{challengeEnrollment?.percentage || 0}%<Text style={styles.percentageText}> Concluído</Text></Text>
+          <Text style={styles.percentageNum}>{parseFloat((challengeEnrollment?.percentage|| 0).toFixed(2))}%<Text style={styles.percentageText}> Concluído</Text></Text>
           <Text style={styles.currentChallengeDay}>Atualmente no {challengeEnrollment?.currentDay || 0}º dia do desafio</Text>
         </View>
 

@@ -31,7 +31,8 @@ export interface RegistrationProps {
   email: string,
   completedChallenges?: number,
   enrolledChallenges?: string[],
-  photo?: string
+  photo?: string,
+  password?: string
 }
 
 export interface UserDataProps {
@@ -42,6 +43,7 @@ export interface UserDataProps {
   enrolledChallenges: string[],
   currentChallenge: string,
   photo: string,
+  motivationalSentence?: string
 }
 
 export function getUser() {
@@ -96,6 +98,8 @@ export async function registerUser(userRegistration: RegistrationProps): Promise
   userRegistration.enrolledChallenges = [];
   userRegistration.photo = "";
 
+  delete userRegistration.password;
+
   let userExists = await checkUserExistence(userRegistration.username);
 
   if (userExists) {
@@ -147,4 +151,13 @@ export async function setUserCurrentChallenge(userEmail: string, challengeId: st
   await firestoreDb.collection("users")
     .doc(userEmail)
     .update({ currentChallenge: challengeId })
+}
+
+export async function finishUserEnrollment(user: UserDataProps) {
+  firestoreDb.collection("users")
+    .doc(user.email)
+    .update({
+      currentChallenge: "",
+      completedChallenges: user.completedChallenges + 1
+    })
 }

@@ -12,7 +12,8 @@ export const THEME = {
 
     PLACEHOLDER: '#455A64',
 
-    DARKER_GREY: '#D6D5D5'
+    DARKER_GREY: '#D6D5D5',
+    LIGHT_BLACK: '#a6a6a6'
   },
 
   FONT_FAMILY: {

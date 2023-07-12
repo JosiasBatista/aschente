@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
@@ -7,41 +7,31 @@ import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import { THEME } from '../../theme';
 import UserContext from '../../context/UserContext';
-import { Challenge, ChallengeEnrollment, getChallengeEnrollment } from '../../service/challenges';
+import { Challenge, checkChallengeEnrollAndUpdate } from '../../service/challenges';
+import ChallengeEnrollContext from '../../context/ChallengeEnrollContext';
 
-export function CurrentChallenge({ challenges }: { challenges: Challenge[] }) {
-  const [currentUserChallenge, setCurrentUserChallenge] = useState<Challenge>();
-  const [challengeEnrollment, setChallengeEnrollment] = useState<ChallengeEnrollment | null>();
-  const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
+export function CurrentChallenge({ challenge }: { challenge: Challenge | undefined }) {
+  const { challengeEnrollment } = useContext(ChallengeEnrollContext);
   const { userRegistered } = useContext(UserContext);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    setCurrentUserChallenge(challenges.find((chal) => {
-      return chal.id == userRegistered.currentChallenge;
-    }))
-
-    getChallengeEnrollment(userRegistered.email, userRegistered.currentChallenge)
-      .then((challengeEnroll) => {
-        setChallengeEnrollment(challengeEnroll)
-      })
-      .catch(() => {
-        setChallengeEnrollment(null);
-      }).finally(() => {
-        setLoading(false);
-      })
-  }, [navigation])
+    if (challengeEnrollment && challenge) {
+      checkChallengeEnrollAndUpdate(challengeEnrollment, challenge.days || null, userRegistered);
+    }
+  }, [challenge, challengeEnrollment])
 
   return (
-    <View style={styles.container}>
-      {loading ?
-        <ActivityIndicator size="large" color={THEME.COLORS.WHITE_TEXT} />
-        :
+    <TouchableOpacity 
+      style={styles.container}
+      onPress={() => challengeEnrollment && navigation.navigate("showChallenge", { challenge: challenge })}
+    >
+      {
         challengeEnrollment ?
           <>
             <View style={styles.challengeInfo}>
-              <Text style={styles.challengeTitle}>{currentUserChallenge?.title}</Text>
-              <Text style={styles.challengeDesc}>{currentUserChallenge?.description}</Text>
+              <Text style={styles.challengeTitle}>{challenge?.title}</Text>
+              <Text style={styles.challengeDesc}>{challenge?.description}</Text>
             </View>
 
             <AnimatedCircularProgress
@@ -52,7 +42,7 @@ export function CurrentChallenge({ challenges }: { challenges: Challenge[] }) {
               onAnimationComplete={() => console.log('onAnimationComplete')}
             >
               {() => (
-                <Text style={styles.challengePercentage}>{challengeEnrollment.percentage}%</Text>
+                <Text style={styles.challengePercentage}>{parseFloat(challengeEnrollment.percentage.toFixed(1))}%</Text>
               )}
             </AnimatedCircularProgress>
           </>
@@ -62,6 +52,6 @@ export function CurrentChallenge({ challenges }: { challenges: Challenge[] }) {
             <Text style={styles.challengeTitle}>Você ainda não faz parte de um desafio! Inscreva-se agora e faça seu futuro decolar!</Text>
           </View>
       }
-    </View>
+    </TouchableOpacity>
   );
 }

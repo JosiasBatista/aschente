@@ -29,7 +29,8 @@ const userDefaultValue: UserDataProps = {
   completedChallenges: 0,
   enrolledChallenges: [],
   photo: '',
-  currentChallenge: ''
+  currentChallenge: '',
+  motivationalSentence: 'No Risk, No story'
 }
 
 const contextDefaultValues: UserContextProps = {

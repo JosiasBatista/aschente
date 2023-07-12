@@ -15,7 +15,7 @@ export function Home() {
 
   useEffect(() => {
     getExistentChallenges().then((challenges) => {
-      setChallenges(challenges)
+      setChallenges(challenges.filter(chal => chal.id != userRegistered.currentChallenge))
     }).catch(() => {
       setChallenges(null);
     }).finally(() => {
@@ -26,7 +26,7 @@ export function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-
+      
       <View style={styles.greetingCont}>
         <Text style={styles.greetingsTitle}>Hey, 
           <Text style={styles.greetingUsername}> {userRegistered.username}</Text>
@@ -35,7 +35,7 @@ export function Home() {
         <Text style={styles.greetingsMessage}>Preparado para continuar evoluindo cada vez mais com os desafios?</Text>
       </View>
 
-      <CurrentChallenge challenges={challenges || []} />
+      <CurrentChallenge challenge={challenges?.find(chal => chal.id == userRegistered.currentChallenge)} />
 
       <ChallengesList challenges={challenges || []} loading={loading} />
     </SafeAreaView>

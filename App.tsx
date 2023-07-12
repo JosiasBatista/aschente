@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+
 import { StatusBar, View, Platform } from 'react-native';
 import {
   useFonts,
@@ -10,6 +12,7 @@ import {
 import { Routes } from './src/routes';
 import { Loading } from './src/components/Loading';
 import { UserContextProvider } from './src/context/UserContext';
+import { ChallengeEnrollContextProvider } from './src/context/ChallengeEnrollContext';
 
 export default function App() {
 
@@ -30,7 +33,9 @@ export default function App() {
 
       { fontsLoaded ? 
         <UserContextProvider>
-          <Routes /> 
+          <ChallengeEnrollContextProvider>
+            <Routes /> 
+          </ChallengeEnrollContextProvider>
         </UserContextProvider>
         : 
         <Loading />

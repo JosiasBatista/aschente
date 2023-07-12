@@ -30,10 +30,11 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: 0,
-    height: 60,
     backgroundColor: '#FFF',
     width: THEME.SIZES.SCREEN_WIDTH,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    gap: 5,
+    padding: 5
   }
 });

@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
 
   challengePercentage: {
     fontFamily: THEME.FONT_FAMILY.BOLD,
-    fontSize: 30,
+    fontSize: 28,
     color: THEME.COLORS.WHITE_TEXT
   },
 

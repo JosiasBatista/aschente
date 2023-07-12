@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
 
   challengeHeader: {
     width: THEME.SIZES.SCREEN_WIDTH,
+    paddingHorizontal: 16,
     backgroundColor: THEME.COLORS.WHITE_TEXT,
     paddingBottom: 24,
     elevation: 5,
