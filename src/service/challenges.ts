@@ -24,6 +24,7 @@ export interface ChallengeEnrollment {
   currentDay: number,
   percentage: number,
   enrollmentActivities: EnrollmentActivities[],
+  totalDays: number,
   finished?: boolean;
   finishedAt?: Timestamp;
 }
@@ -91,23 +92,24 @@ export async function getChallengeEnrollment(
     })
 }
 
-export async function enrollUserInChallenge(userEmail: string, challengeId: string, challengeActivities: string[]): Promise<ChallengeEnrollment | null> {
+export async function enrollUserInChallenge(userEmail: string, challenge: Challenge, challengeActivities: string[]): Promise<ChallengeEnrollment | null> {
   const userIsInChallenge = await checkIfUserIsAlreadyEnrolledInChallenge(userEmail);
 
   if (userIsInChallenge) return null;
   
   const enrollmentData = {
     userEmail: userEmail,
-    challengeId: challengeId,
+    challengeId: challenge.id,
     currentDay: 1,
     percentage: 0,
-    enrollmentActivities: passActivitiesToEnrollment(challengeActivities)
+    enrollmentActivities: passActivitiesToEnrollment(challengeActivities),
+    totalDays: challenge.days
   } as ChallengeEnrollment
 
   return firestoreDb.collection("challengeEnrollments")
     .add(enrollmentData)
     .then(async () => {
-      await setUserCurrentChallenge(userEmail, challengeId);
+      await setUserCurrentChallenge(userEmail, challenge.id);
       return enrollmentData;
     }).catch(() => {
       return null;
@@ -213,6 +215,13 @@ function cleanActivities(enrollmentActivities: EnrollmentActivities[]) {
   return cleanedActivities;
 }
 
+function isNextDay(next: Date, current: Date) {
+  var date = new Date(next);
+  date.setDate(date.getDate() + 1);
+  
+  return (date.getFullYear() === current.getFullYear()) && (date.getMonth() === current.getMonth()) && (date.getDate() === current.getDate());
+};
+
 export async function checkChallengeEnrollAndUpdate(challengeEnrollment: ChallengeEnrollment | null, challengeDays: number | null, user: UserDataProps) {
   if (!challengeDays || !challengeEnrollment) return;
 
@@ -221,7 +230,7 @@ export async function checkChallengeEnrollAndUpdate(challengeEnrollment: Challen
       const todayDate = moment();
       const date = moment(challengeEnrollment.finishedAt.toDate());
 
-      if (todayDate.diff(date, 'days') == 1) {
+      if (isNextDay(date.toDate(), todayDate.toDate())) {
         increaseDayInChallengeEnrollment(challengeEnrollment, challengeDays, user);
       } else if (todayDate.diff(date, 'days') > 1) {
         console.log("You lost a day in your challenge")

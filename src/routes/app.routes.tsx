@@ -7,6 +7,7 @@ import { ShowChallenge } from '../screens/ShowChallenge';
 import { ChallengeActivities } from '../screens/ChallengeActivities';
 import { Profile } from '../screens/Profile';
 import { THEME } from '../theme';
+import { EditProfile } from '../screens/EditProfile';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -34,7 +35,7 @@ export function AppRoutes() {
             />
           )
       }
-  })}>
+    })}>
       <Screen
         name="home"
         component={Home}
@@ -50,6 +51,10 @@ export function AppRoutes() {
       <Screen
         name="userProfile"
         component={Profile}
+      />
+      <Screen
+        name="editProfile"
+        component={EditProfile}
       />
     </Navigator>
   )

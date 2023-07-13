@@ -54,6 +54,10 @@ export const styles = StyleSheet.create({
     fontSize: THEME.FONT_SIZE.MD,
     lineHeight: THEME.FONT_SIZE.MD,
     color: THEME.COLORS.WHITE_TEXT,
-    marginTop: 8
+    padding: 8
+  },
+
+  retryButton: {
+    color: THEME.COLORS.DARKER_GREY
   }
 });

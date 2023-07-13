@@ -33,9 +33,7 @@ export default function App() {
 
       { fontsLoaded ? 
         <UserContextProvider>
-          <ChallengeEnrollContextProvider>
-            <Routes /> 
-          </ChallengeEnrollContextProvider>
+          <Routes /> 
         </UserContextProvider>
         : 
         <Loading />

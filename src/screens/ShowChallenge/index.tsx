@@ -114,7 +114,7 @@ export function ShowChallenge() {
 
   const makeEnrollment = () => {
     setLoading(true);
-    enrollUserInChallenge(userRegistered.email, challenge.id, challenge.activities).then((response) => {
+    enrollUserInChallenge(userRegistered.email, challenge, challenge.activities).then((response) => {
       if (!response) {
         showErrorMessageInSubscription();
       } else {

@@ -5,15 +5,17 @@ import { THEME } from '../../theme';
 
 interface Props extends TouchableOpacityProps {
   text: string,
+  specificStyle?: any,
   isLoading?: boolean, 
   redButton?: boolean
 }
 
-export function Button({ text, onPress, isLoading = false, redButton = false, ...rest }: Props) {
+export function Button({ text, onPress, isLoading = false, redButton = false, specificStyle, ...rest }: Props) {
   return (
     <TouchableOpacity 
       onPress={onPress} 
-      style={[styles.button, redButton ? styles.redButton : null]} 
+      disabled={isLoading}
+      style={[styles.button, redButton ? styles.redButton : null, specificStyle]} 
       {...rest}
     >
       {isLoading ?

@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8
   },
 
-  userWithoutPhoto: {
+  userPhoto: {
     width: 100,
     height: 100,
     borderRadius: 50,
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
 
   userName: {
     fontFamily: THEME.FONT_FAMILY.SEMI_BOLD,
-    fontSize: THEME.FONT_SIZE.ML,
+    fontSize: THEME.FONT_SIZE.LG,
     color: THEME.COLORS.PRIMARY_RED
   },
   
@@ -35,6 +35,19 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.FONT_FAMILY.MEDIUM,
     fontSize: THEME.FONT_SIZE.MD,
     color: THEME.COLORS.PLACEHOLDER
+  },
+
+  editProfileCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+    gap: 4
+  },
+
+  editProfileLink: {
+    fontFamily: THEME.FONT_FAMILY.MEDIUM,
+    fontSize: THEME.FONT_SIZE.SM,
+    color: THEME.COLORS.PRIMARY_RED,
   },
 
   counterContainer: {

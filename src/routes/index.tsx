@@ -7,6 +7,7 @@ import { AppRoutes } from './app.routes';
 import { InitialRoutes } from './initial.routes';
 import { UnverifiedRoutes } from './unverified.routes';
 import { Loading } from '../components/Loading';
+import { ChallengeEnrollContextProvider } from '../context/ChallengeEnrollContext';
 
 export function Routes() {
   const { user, isLoading } = useContext(UserContext);
@@ -19,7 +20,9 @@ export function Routes() {
       <RootSiblingParent>
           {user ?
             user.emailVerified ?
-              <AppRoutes />
+              <ChallengeEnrollContextProvider>
+                <AppRoutes />
+              </ChallengeEnrollContextProvider>
               :
               <UnverifiedRoutes />
             :

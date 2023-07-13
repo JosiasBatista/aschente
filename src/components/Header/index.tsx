@@ -7,10 +7,14 @@ import { styles } from './styles';
 import { THEME } from '../../theme';
 import UserContext from '../../context/UserContext';
 import { Button } from '../Button';
+import { useSignOut } from '../../hook/useSignOut';
+import { DeleteConfirmation } from '../DeleteConfirmation';
 
 export function Header() {
-  const { userRegistered } = useContext(UserContext);
+  const { userRegistered, logout, unregister } = useContext(UserContext);
+  const [{}, handleSignOut] = useSignOut();
   const navigation = useNavigation();
+  const [deleteConfirmModalStatus, setDeleteConfirmModalStatus] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useLayoutEffect(() => {
@@ -25,6 +29,12 @@ export function Header() {
     })
   }, [navigation])
 
+  const handleUserLogout = async () => {
+    if (typeof unregister == "function") await unregister();
+    logout();
+    handleSignOut();
+  }
+
   return (
     isMenuOpen ?
       <Modal transparent={true} animationType="fade">
@@ -37,7 +47,7 @@ export function Header() {
 
               <View style={styles.userInfos}>
                 {userRegistered.photo ?
-                  <Image source={{ uri: userRegistered.photo }} />
+                  <Image source={{ uri: userRegistered.photo }} style={styles.userPhoto} />
                   :
                   <View style={styles.userPhoto}>
                     <FontAwesome name="user" color={THEME.COLORS.DARKER_GREY} size={20} />
@@ -45,8 +55,8 @@ export function Header() {
                 }
 
                 <View>
-                  <Text style={styles.userName}>{userRegistered.username}</Text>
-                  <TouchableOpacity onPress={() => navigation.navigate("userProfile")}>
+                  <Text style={styles.userName}>{userRegistered?.username}</Text>
+                  <TouchableOpacity onPress={() => { setIsMenuOpen(false); navigation.navigate("userProfile") }}>
                     <Text style={styles.showProfile}>Ver perfil</Text>
                   </TouchableOpacity>
                 </View>
@@ -58,16 +68,23 @@ export function Header() {
               </Text>
 
               <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.logoutButton}>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleUserLogout}>
                   <Text style={styles.logoutButtonText}>Sair</Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => setDeleteConfirmModalStatus(true)}>
                   <Text style={styles.deleteAccountButton}>Deletar</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </TouchableWithoutFeedback>
         </TouchableOpacity>
+
+        {/* {deleteConfirmModalStatus && */}
+          <DeleteConfirmation
+            isOpen={deleteConfirmModalStatus}
+            closeModal={() => setDeleteConfirmModalStatus(false)}
+          />
+        {/* } */}
       </Modal>
       :
       <></>

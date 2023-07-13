@@ -10,7 +10,8 @@ export declare global {
       signup: undefined,
       showChallenge: { challenge: Challenge },
       challengeActivities: { challengeEnrollment: ChallengeEnrollment },
-      userProfile: undefined
+      userProfile: undefined,
+      editProfile: undefined
     }
   }
 }

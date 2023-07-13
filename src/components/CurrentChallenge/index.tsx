@@ -1,25 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 
 import { styles } from './styles';
-import { THEME } from '../../theme';
-import UserContext from '../../context/UserContext';
-import { Challenge, checkChallengeEnrollAndUpdate } from '../../service/challenges';
+import { Challenge } from '../../service/challenges';
 import ChallengeEnrollContext from '../../context/ChallengeEnrollContext';
 
 export function CurrentChallenge({ challenge }: { challenge: Challenge | undefined }) {
   const { challengeEnrollment } = useContext(ChallengeEnrollContext);
-  const { userRegistered } = useContext(UserContext);
   const navigation = useNavigation();
-
-  useEffect(() => {
-    if (challengeEnrollment && challenge) {
-      checkChallengeEnrollAndUpdate(challengeEnrollment, challenge.days || null, userRegistered);
-    }
-  }, [challenge, challengeEnrollment])
 
   return (
     <TouchableOpacity 

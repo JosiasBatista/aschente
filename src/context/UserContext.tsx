@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useRef } from 'react';
-import { UserDataProps, authStateAnalizer, getUser, getUserRegistered, reloadUser } from '../service/user';
+import { UserDataProps, authStateAnalizer, getUser, getUserRegistered, reloadUser, removeUserRegistration } from '../service/user';
 
 interface ContextProps {
   children: any,
@@ -13,7 +13,9 @@ interface UserContextProps {
   userRegistered: UserDataProps,
   reload: () => void,
   logout: () => void,
-  reloadRegistration: () => void
+  unregister?: any,
+  reloadRegistration: () => void,
+  removeUser: () => void | Promise<boolean>,
 }
 
 interface UserLoggedProps {
@@ -40,7 +42,8 @@ const contextDefaultValues: UserContextProps = {
   userRegistered: userDefaultValue,
   reload: () => {},
   logout: () => {},
-  reloadRegistration: () => {}
+  reloadRegistration: () => {},
+  removeUser: () => {}
 }
 
 const UserContext = createContext<UserContextProps>(contextDefaultValues);
@@ -94,13 +97,25 @@ export const UserContextProvider = ({
     setUserRegistered(null);
   }
 
+  const removeUser = async (): Promise<boolean> => {
+    if (typeof unregister.current == "function") unregister.current();
+
+    try {
+      await removeUserRegistration(userRegistered?.email || "");
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   const value = {
     ...userState,
     userRegistered,
     reload: handleReload,
     logout: handleLogout,
     unregister: unregister.current,
-    reloadRegistration
+    reloadRegistration,
+    removeUser
   } as UserContextProps
   
   return (

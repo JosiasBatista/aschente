@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FlatList, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View, ActivityIndicator, RefreshControl, RefreshControlProps } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
 import FontAwesomeOri from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
@@ -10,10 +10,11 @@ import { THEME } from '../../theme';
 
 interface ChallengeListProps {
   challenges: Challenge[],
-  loading: boolean
+  loading: boolean,
+  refresh: React.ReactElement<RefreshControlProps, string | React.JSXElementConstructor<any>> | undefined
 }
 
-export function ChallengesList({ challenges, loading }: ChallengeListProps) {
+export function ChallengesList({ challenges, loading, refresh }: ChallengeListProps) {
   const navigation = useNavigation();
 
   if (challenges == null) {
@@ -38,6 +39,7 @@ export function ChallengesList({ challenges, loading }: ChallengeListProps) {
           contentContainerStyle={styles.challengesCont}
           keyExtractor={(item) => String(item.id)}
           style={{ flexGrow: 1 }}
+          refreshControl={refresh}
           ListEmptyComponent={() => (
             <View style={styles.errorCont}>
               <FontAwesome name="frown" color="#303030" size={45} />

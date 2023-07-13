@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, Dispatch } from 'react';
-import { ChallengeEnrollment, getChallengeEnrollment } from '../service/challenges';
+import React, { createContext, useContext, useEffect, useState, Dispatch, useRef } from 'react';
+import { ChallengeEnrollment, checkChallengeEnrollAndUpdate, getChallengeEnrollment } from '../service/challenges';
 import UserContext from './UserContext';
 
 interface ContextProps {
@@ -12,7 +12,8 @@ const challengeDefaultValues: ChallengeEnrollment = {
   challengeId: "",
   currentDay: 1,
   enrollmentActivities: [],
-  percentage: 0
+  percentage: 0,
+  totalDays: 0
 }
 
 const ChallengeEnrollContext = createContext<{ 
@@ -29,23 +30,33 @@ export const ChallengeEnrollContextProvider = ({
 }: ContextProps) => {
   const { userRegistered } = useContext(UserContext);
   const [challengeEnrollment, setChallengeEnrollment] = useState<ChallengeEnrollment | null>(null);
+  const unregister = useRef(() => {});
 
   useEffect(() => {
-    let challengeEnrollListener: () => void;
 
     const listenChallengeEnroll = async () => {
-      challengeEnrollListener = await getChallengeEnrollment(
-        userRegistered.email, 
-        userRegistered.currentChallenge,
-        (value) => setChallengeEnrollment(value)
-      );
+      if (userRegistered && userRegistered.currentChallenge) {
+        unregister.current = await getChallengeEnrollment(
+          userRegistered.email, 
+          userRegistered.currentChallenge,
+          (value) => setChallengeEnrollment(value)
+        );
+      } else {
+        if (typeof unregister.current == "function")
+          unregister.current()
+      }
     }
-
+    
     listenChallengeEnroll()
     return () => {
-      challengeEnrollListener()
+      if (typeof unregister.current == "function")
+        unregister.current()
     }
   }, [userRegistered])
+
+  useEffect(() => {
+    checkChallengeEnrollAndUpdate(challengeEnrollment, challengeEnrollment?.totalDays || null, userRegistered);
+  }, [challengeEnrollment])
 
   const value = {
     challengeEnrollment,

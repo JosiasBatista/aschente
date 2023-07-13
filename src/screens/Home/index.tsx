@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, Text, View, RefreshControl } from 'react-native';
 
 import { styles } from './styles';
 import { Header } from '../../components/Header';
@@ -14,14 +14,18 @@ export function Home() {
   const { userRegistered } = useContext(UserContext);
 
   useEffect(() => {
+    fetchForChallenges()
+  }, [])
+
+  const fetchForChallenges = () => {
     getExistentChallenges().then((challenges) => {
-      setChallenges(challenges.filter(chal => chal.id != userRegistered.currentChallenge))
+      setChallenges(challenges)
     }).catch(() => {
       setChallenges(null);
     }).finally(() => {
       setLoading(false);
     });
-  }, [])
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,7 +33,7 @@ export function Home() {
       
       <View style={styles.greetingCont}>
         <Text style={styles.greetingsTitle}>Hey, 
-          <Text style={styles.greetingUsername}> {userRegistered.username}</Text>
+          <Text style={styles.greetingUsername}> {userRegistered?.username}</Text>
         </Text>
 
         <Text style={styles.greetingsMessage}>Preparado para continuar evoluindo cada vez mais com os desafios?</Text>
@@ -37,7 +41,11 @@ export function Home() {
 
       <CurrentChallenge challenge={challenges?.find(chal => chal.id == userRegistered.currentChallenge)} />
 
-      <ChallengesList challenges={challenges || []} loading={loading} />
+      <ChallengesList challenges={challenges || []} loading={loading} 
+        refresh={
+          <RefreshControl refreshing={loading} onRefresh={fetchForChallenges} />
+        } 
+      />
     </SafeAreaView>
   );
 }

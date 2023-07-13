@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Image, View, Text } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
 import moment from "moment";
 
 import { styles } from './styles';
@@ -9,8 +10,9 @@ import { CompletedChallenges, getUserChallengesCompleted } from '../../service/c
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME } from '../../theme';
 import { Header } from '../Header';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Timestamp } from 'firebase/firestore';
+import UserContext from '../../context/UserContext';
 
 interface ProfileComponentProps {
   user: UserDataProps
@@ -23,6 +25,8 @@ interface TypesCounter {
 }
 
 export function ProfileComponent({ user }: ProfileComponentProps) {
+  const { userRegistered } = useContext(UserContext);
+  const navigation = useNavigation();
   const [completedChallenges, setCompletedChallenges] = useState<CompletedChallenges[]>([]);
   const [typesCounter, setTypesCounter] = useState<TypesCounter>({
     pawn: 0,
@@ -59,22 +63,32 @@ export function ProfileComponent({ user }: ProfileComponentProps) {
     return formatedDate;
   }
 
+  const goToEditProfile = () => {
+    navigation.navigate("editProfile");
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Header />
 
       <View style={styles.userInfoCont}>
         {user.photo ?
-          <Image source={{ uri: user.photo }} />
+          <Image source={{ uri: user.photo }} style={styles.userPhoto} />
           :
-          <View style={styles.userWithoutPhoto}>
+          <View style={styles.userPhoto}>
             <FontAwesome name="user" color={THEME.COLORS.DARKER_GREY} size={20} />
           </View>
         }
 
         <View>
-          <Text style={styles.userName}>{user.username}</Text>
-          <Text style={styles.userEmail}>{user.email}</Text>
+          <Text style={styles.userName}>{user?.username}</Text>
+          <Text style={styles.userEmail}>{user?.email}</Text>
+          {user.id == userRegistered.id &&
+            <TouchableOpacity onPress={() => goToEditProfile()} style={styles.editProfileCont}>
+              <FontAwesome name="cog" color={THEME.COLORS.PRIMARY_RED} />
+              <Text style={styles.editProfileLink}>Editar Perfil</Text>
+            </TouchableOpacity>
+          }
         </View>
       </View>
 

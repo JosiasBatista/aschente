@@ -7,11 +7,13 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  deleteUser
 } from 'firebase/auth';
 import firebaseApp, { firestoreDb } from './index';
 import { getReactNativePersistence } from 'firebase/auth/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { uploadImage } from '../utils/photo';
 
 const auth = initializeAuth(firebaseApp, {
   persistence: getReactNativePersistence(AsyncStorage)
@@ -32,7 +34,8 @@ export interface RegistrationProps {
   completedChallenges?: number,
   enrolledChallenges?: string[],
   photo?: string,
-  password?: string
+  password?: string,
+  motivationalSentence?: string
 }
 
 export interface UserDataProps {
@@ -48,6 +51,14 @@ export interface UserDataProps {
 
 export function getUser() {
   return auth.currentUser;
+}
+
+export const deleteFirebaseUser = () => {
+  if (auth.currentUser) {
+    return deleteUser(auth.currentUser);
+  } else {
+    throw new Error("userNotFound")
+  }
 }
 
 export async function signUpUserWithEmailAndPassword({ email, password }: BasicAuthProps) {
@@ -69,6 +80,12 @@ export async function signUpUserWithEmailAndPassword({ email, password }: BasicA
 
 export function signInUserWithEmailAndPassword({ email, password }: BasicAuthProps) {
   return signInWithEmailAndPassword(auth, email, password);
+}
+
+export function sendVerification() {
+  if (auth.currentUser) {
+    return sendEmailVerification(auth.currentUser);
+  }
 }
 
 export function sendPasswordEmail({ email }: SendEmailProps) {
@@ -97,6 +114,7 @@ export async function registerUser(userRegistration: RegistrationProps): Promise
   userRegistration.completedChallenges = 0;
   userRegistration.enrolledChallenges = [];
   userRegistration.photo = "";
+  userRegistration.motivationalSentence = "No risk, no story"
 
   delete userRegistration.password;
 
@@ -120,6 +138,46 @@ export async function registerUser(userRegistration: RegistrationProps): Promise
       console.log(error);
 
       throw new Error('errorCreatingUser')
+    })
+}
+
+export async function removeUserRegistration(userEmail: string) {
+  if (!userEmail) return;
+
+  const removedData = await Promise.all([
+    deleteUserEnrollments(userEmail),
+    deleteUserFinishedChallenges(userEmail)
+  ]).catch((error) => {
+    console.log(error);
+    throw new Error('failDeletingData');
+  });
+
+  if (!removedData) throw new Error('failDeletingData');
+
+  return firestoreDb.collection("users")
+    .doc(userEmail)
+    .delete()
+}
+
+async function deleteUserEnrollments(userEmail: string) {
+  return firestoreDb.collection("challengeEnrollments")
+    .where("userEmail", "==", userEmail)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        doc.ref.delete();
+      })
+    })
+}
+
+async function deleteUserFinishedChallenges(userEmail: string) {
+  return firestoreDb.collection("challengesFinished")
+    .where("user", "==", userEmail)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        doc.ref.delete();
+      })
     })
 }
 
@@ -159,5 +217,24 @@ export async function finishUserEnrollment(user: UserDataProps) {
     .update({
       currentChallenge: "",
       completedChallenges: user.completedChallenges + 1
+    })
+}
+
+export async function updateUserProfile(userRegistered: UserDataProps, userPhoto: string, username: string, sentence: string) {
+  const updatedValues: any = {};
+
+  if (userPhoto) {
+    const photoUrl = await uploadImage(userPhoto, userRegistered.username);
+    updatedValues["photo"] = photoUrl
+  };
+
+  if (username) updatedValues["username"] = username;
+  if (sentence) updatedValues["motivationalSentence"] = sentence;
+
+  return firestoreDb.collection("users")
+    .doc(userRegistered.email)
+    .update({
+      ...userRegistered,
+      ...updatedValues
     })
 }
