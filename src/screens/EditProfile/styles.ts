@@ -39,7 +39,8 @@ export const styles = StyleSheet.create({
     width: THEME.SIZES.SCREEN_WIDTH * 1.2,
     height: THEME.SIZES.SCREEN_WIDTH * 0.5,
     aspectRatio: 1/1,
-    marginTop: 40
+    marginTop: 40,
+    alignSelf: 'center'
   },
 
   updateButton: {

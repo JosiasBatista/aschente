@@ -61,6 +61,6 @@ export const styles = StyleSheet.create({
     fontSize: THEME.FONT_SIZE.MD,
     lineHeight: THEME.FONT_SIZE.MD,
     color: THEME.COLORS.BLACK_TEXT,
-    marginTop: 8
+    paddingVertical: 8
   }
 });

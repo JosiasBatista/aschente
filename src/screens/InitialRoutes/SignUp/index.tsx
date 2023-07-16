@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, View, Image, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { Text, View, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-root-toast';
@@ -105,7 +105,7 @@ export function SignUp() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled'>
       <FontAwesome name="chess-rook" size={25} color={THEME.COLORS.PRIMARY_RED} />
 
       <View style={styles.onboardingTitleCont}>
@@ -166,6 +166,6 @@ export function SignUp() {
           <Text style={styles.alreadyHaveAccountLink}>Já possuo conta</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }

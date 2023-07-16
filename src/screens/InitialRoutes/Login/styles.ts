@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: THEME.COLORS.WHITE_TEXT,
-    paddingTop: '20%'
+    paddingTop: '15%'
   },
 
   onboardingTitleCont: {

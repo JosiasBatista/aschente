@@ -35,7 +35,7 @@ export const ChallengeEnrollContextProvider = ({
   useEffect(() => {
 
     const listenChallengeEnroll = async () => {
-      if (userRegistered && userRegistered?.currentChallenge) {
+      if (userRegistered && userRegistered && userRegistered.currentChallenge) {
         unregister.current = await getChallengeEnrollment(
           userRegistered.email, 
           userRegistered.currentChallenge,

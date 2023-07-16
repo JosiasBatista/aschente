@@ -39,7 +39,7 @@ export function Home() {
         <Text style={styles.greetingsMessage}>Preparado para continuar evoluindo cada vez mais com os desafios?</Text>
       </View>
 
-      <CurrentChallenge challenge={challenges?.find(chal => chal.id == userRegistered.currentChallenge)} />
+      <CurrentChallenge challenge={challenges?.find(chal => chal.id == userRegistered?.currentChallenge)} />
 
       <ChallengesList challenges={challenges || []} loading={loading} 
         refresh={

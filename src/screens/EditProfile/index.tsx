@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { View, TouchableOpacity, Image, TextInput, Text } from 'react-native';
+import { View, TouchableOpacity, Image, TextInput, Text, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
 
@@ -11,6 +11,7 @@ import { getImage } from '../../utils/photo';
 import { updateUserProfile } from '../../service/user';
 
 import adjustChess from '../../assets/adjustchess.png';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 type FormKey = 'username' | 'motivationalSentence';
 
@@ -44,45 +45,47 @@ export function EditProfile() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => getImage(setNewImage)} style={{ alignItems: 'center' }}>
-        <Text style={styles.editPhotoText}>Editar Foto</Text>
-        {userRegistered.photo || newImage ?
-          <Image
-            source={{ uri: newImage ? newImage : userRegistered.photo }}
-            style={styles.userPhoto}
-          />
-          :
-          <View style={styles.userPhoto}>
-            <FontAwesome name="user" color={THEME.COLORS.DARKER_GREY} size={20} />
-          </View>
-        }
-      </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} containerStyle={styles.container}>
+        <TouchableOpacity onPress={() => getImage(setNewImage)} style={{ alignItems: 'center' }}>
+          <Text style={styles.editPhotoText}>Editar Foto</Text>
+          {userRegistered.photo || newImage ?
+            <Image
+              source={{ uri: newImage ? newImage : userRegistered.photo }}
+              style={styles.userPhoto}
+            />
+            :
+            <View style={styles.userPhoto}>
+              <FontAwesome name="user" color={THEME.COLORS.DARKER_GREY} size={20} />
+            </View>
+          }
+        </TouchableOpacity>
 
-      <TextInput
-        placeholder="Nome de Usuário..."
-        style={styles.input}
-        value={updateForm.username}
-        placeholderTextColor={THEME.COLORS.PLACEHOLDER}
-        onChangeText={(text) => setFormValue("username", text.toLocaleLowerCase())}
-        autoCapitalize="none"
-        secureTextEntry={true}
-        keyboardType={"visible-password"}
-      />
+        <TextInput
+          placeholder="Nome de Usuário..."
+          style={styles.input}
+          value={updateForm.username}
+          placeholderTextColor={THEME.COLORS.PLACEHOLDER}
+          onChangeText={(text) => setFormValue("username", text.toLocaleLowerCase())}
+          autoCapitalize="none"
+          secureTextEntry={true}
+          keyboardType={"visible-password"}
+        />
 
-      <TextInput
-        placeholder="Frase Motivacional..."
-        value={updateForm.motivationalSentence}
-        placeholderTextColor={THEME.COLORS.LIGHT_BLACK}
-        onChangeText={(text) => setFormValue("motivationalSentence", text)}
-        style={styles.input}
-      />
+        <TextInput
+          placeholder="Frase Motivacional..."
+          value={updateForm.motivationalSentence}
+          placeholderTextColor={THEME.COLORS.LIGHT_BLACK}
+          onChangeText={(text) => setFormValue("motivationalSentence", text)}
+          style={styles.input}
+        />
 
-      <Image
-        source={adjustChess}
-        defaultSource={adjustChess}
-        style={styles.updateImage}
-      />
+        <Image
+          source={adjustChess}
+          defaultSource={adjustChess}
+          style={styles.updateImage}
+        />
 
+      </TouchableWithoutFeedback>
       <Button onPress={updateProfile} isLoading={loading} text='Atualizar' specificStyle={styles.updateButton} redButton={true} />
     </View>
   );
