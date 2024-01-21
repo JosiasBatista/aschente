@@ -10,7 +10,7 @@ import { Button } from '../../components/Button';
 import { getImage } from '../../utils/photo';
 import { updateUserProfile } from '../../service/user';
 
-import adjustChess from '../../assets/adjustchess.png';
+import thinking from '../../assets/thinking.png';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 type FormKey = 'username' | 'motivationalSentence';
@@ -80,8 +80,8 @@ export function EditProfile() {
         />
 
         <Image
-          source={adjustChess}
-          defaultSource={adjustChess}
+          source={thinking}
+          defaultSource={thinking}
           style={styles.updateImage}
         />
 

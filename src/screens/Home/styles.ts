@@ -32,5 +32,17 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.FONT_FAMILY.MEDIUM,
     fontSize: THEME.FONT_SIZE.SM,
     color: THEME.COLORS.PLACEHOLDER
+  },
+
+  addChallengeButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 45,
+    height: 45,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: THEME.COLORS.PRIMARY_RED
   }
 });

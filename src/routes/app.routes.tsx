@@ -6,8 +6,12 @@ import { Home } from '../screens/Home';
 import { ShowChallenge } from '../screens/ShowChallenge';
 import { ChallengeActivities } from '../screens/ChallengeActivities';
 import { Profile } from '../screens/Profile';
-import { THEME } from '../theme';
 import { EditProfile } from '../screens/EditProfile';
+import { MainChallengeInfos } from '../screens/CreateChallenge/MainInfos';
+
+import { THEME } from '../theme';
+import { DifficultyAndTime } from '../screens/CreateChallenge/DifficultyAndTime';
+import { EditChallenge } from '../screens/EditChallenge';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -55,6 +59,18 @@ export function AppRoutes() {
       <Screen
         name="editProfile"
         component={EditProfile}
+      />
+      <Screen
+        name="createChallenge"
+        component={MainChallengeInfos}
+      />
+      <Screen
+        name="challengeDifficultyAndTime"
+        component={DifficultyAndTime}
+      />
+      <Screen
+        name="editChallenge"
+        component={EditChallenge}
       />
     </Navigator>
   )

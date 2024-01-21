@@ -10,6 +10,7 @@ export const THEME = {
     BLACK_TEXT: '#000000',
     GREY_TEXT: '#E0E0E0',
 
+    WHITE_OPAQUE: '#FAFAFA',
     PLACEHOLDER: '#455A64',
 
     DARKER_GREY: '#D6D5D5',

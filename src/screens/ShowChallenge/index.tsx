@@ -13,6 +13,7 @@ import UserContext from '../../context/UserContext';
 import { Button } from '../../components/Button';
 import Toast from 'react-native-root-toast';
 import ChallengeEnrollContext from '../../context/ChallengeEnrollContext';
+import { EditOrDeleteChallenge } from '../../components/EditOrDeleteChallenge';
 
 interface ChallengeDay {
   dayNumber: number,
@@ -117,7 +118,6 @@ export function ShowChallenge() {
     enrollUserInChallenge(userRegistered.email, challenge, challenge.activities).then((response) => {
       if (!response) {
         showErrorMessageInSubscription();
-      } else {
       }
     })
     .catch(() => {
@@ -218,6 +218,11 @@ export function ShowChallenge() {
                 </TouchableOpacity>
               )}
             />
+      }
+      
+
+      {challengeEnrollment &&
+        <EditOrDeleteChallenge challenge={challenge} challengeEnrollment={challengeEnrollment} />
       }
       
     </SafeAreaView>

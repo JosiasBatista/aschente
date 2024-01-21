@@ -8,6 +8,7 @@ import { InitialRoutes } from './initial.routes';
 import { UnverifiedRoutes } from './unverified.routes';
 import { Loading } from '../components/Loading';
 import { ChallengeEnrollContextProvider } from '../context/ChallengeEnrollContext';
+import { ChallengeCreationContextProvider } from '../context/ChallengeCreationContext';
 
 export function Routes() {
   const { user, isLoading } = useContext(UserContext);
@@ -21,7 +22,9 @@ export function Routes() {
           {user ?
             user.emailVerified ?
               <ChallengeEnrollContextProvider>
-                <AppRoutes />
+                <ChallengeCreationContextProvider>
+                  <AppRoutes />
+                </ChallengeCreationContextProvider>
               </ChallengeEnrollContextProvider>
               :
               <UnverifiedRoutes />

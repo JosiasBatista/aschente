@@ -19,9 +19,11 @@ const challengeDefaultValues: ChallengeEnrollment = {
 const ChallengeEnrollContext = createContext<{ 
   challengeEnrollment: ChallengeEnrollment | null;
   setChallengeEnrollment: Dispatch<React.SetStateAction<ChallengeEnrollment | null>>;
+  refresh: any
 }>({
   challengeEnrollment: null,
-  setChallengeEnrollment: () => {}
+  setChallengeEnrollment: () => {},
+  refresh: () => {}
 });
 
 export const ChallengeEnrollContextProvider = ({
@@ -33,26 +35,27 @@ export const ChallengeEnrollContextProvider = ({
   const unregister = useRef(() => {});
 
   useEffect(() => {
+    listenChallengeEnroll();
 
-    const listenChallengeEnroll = async () => {
-      if (userRegistered && userRegistered && userRegistered.currentChallenge) {
-        unregister.current = await getChallengeEnrollment(
-          userRegistered.email, 
-          userRegistered.currentChallenge,
-          (value) => setChallengeEnrollment(value)
-        );
-      } else {
-        if (typeof unregister.current == "function")
-          unregister.current()
-      }
-    }
-    
-    listenChallengeEnroll()
     return () => {
       if (typeof unregister.current == "function")
         unregister.current()
     }
   }, [userRegistered])
+
+  const listenChallengeEnroll = async () => {
+    if (userRegistered && userRegistered && userRegistered.currentChallenge) {
+      unregister.current = await getChallengeEnrollment(
+        userRegistered.email, 
+        userRegistered.currentChallenge,
+        (value) => setChallengeEnrollment(value)
+      );
+    } else {
+      if (typeof unregister.current == "function")
+        unregister.current()
+      setChallengeEnrollment(null);
+    }
+  }
 
   useEffect(() => {
     checkChallengeEnrollAndUpdate(challengeEnrollment, challengeEnrollment?.totalDays || null, userRegistered);
@@ -60,7 +63,8 @@ export const ChallengeEnrollContextProvider = ({
 
   const value = {
     challengeEnrollment,
-    setChallengeEnrollment
+    setChallengeEnrollment,
+    refresh: listenChallengeEnroll
   }
 
   return (

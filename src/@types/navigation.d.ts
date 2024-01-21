@@ -8,10 +8,14 @@ export declare global {
       onboarding: undefined,
       login: undefined,
       signup: undefined,
+      home: undefined,
       showChallenge: { challenge: Challenge },
       challengeActivities: { challengeEnrollment: ChallengeEnrollment },
       userProfile: undefined,
-      editProfile: undefined
+      editProfile: undefined,
+      createChallenge: undefined,
+      challengeDifficultyAndTime: undefined,
+      editChallenge: undefined
     }
   }
 }

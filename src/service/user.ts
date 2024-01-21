@@ -220,6 +220,14 @@ export async function finishUserEnrollment(user: UserDataProps) {
     })
 }
 
+export async function removeChallengeFromUser(userEmail: string) {
+  firestoreDb.collection("users")
+    .doc(userEmail)
+    .update({
+      currentChallenge: ""
+    })
+}
+
 export async function updateUserProfile(userRegistered: UserDataProps, userPhoto: string, username: string, sentence: string) {
   const updatedValues: any = {};
 

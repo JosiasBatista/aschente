@@ -1,8 +1,14 @@
 import { firestoreDb, Firebase } from ".";
 import { Timestamp, serverTimestamp } from 'firebase/firestore';
-import { UserDataProps, finishUserEnrollment, setUserCurrentChallenge } from "./user";
+import { UserDataProps, finishUserEnrollment, removeChallengeFromUser, setUserCurrentChallenge } from "./user";
 import moment from "moment";
 import Toast from "react-native-root-toast";
+
+export const CHALLENGE_DIFFICULTY_VALUES = [
+  "pawn",
+  "rook",
+  "king"
+]
 
 export interface Challenge {
   id: string,
@@ -10,7 +16,18 @@ export interface Challenge {
   description: string,
   difficulty: "pawn" | "rook" | "king",
   days: number,
-  activities: string[]
+  activities: string[],
+  isPublic: boolean,
+  creatorId: string
+}
+
+export interface ChallengeCreation {
+  title: string,
+  description: string,
+  difficulty: "pawn" | "rook" | "king",
+  days: number,
+  activities: string[],
+  creatorId: string
 }
 
 export interface EnrollmentActivities { 
@@ -39,13 +56,24 @@ export interface CompletedChallenges extends Challenge {
   finish: ChallengeFinished
 }
 
-export async function getExistentChallenges(): Promise<Challenge[]> {
-  return firestoreDb.collection("challenges")
-    .get()
-    .then((challengeDocuments) => {
-      if (challengeDocuments.empty) return [];
+export async function getExistentChallenges(userId: string): Promise<Challenge[]> {
+  const createdByUserQuery = firestoreDb.collection("challenges").where("creatorId", "==", userId).get();
+  const publicChallengeQuery = firestoreDb.collection("challenges").where("isPublic", "==", true).get();
 
-      const challenges = challengeDocuments.docs.map((challenge) => {
+  console.log(userId)
+  // return firestoreDb.collection("challenges")
+  // .get()
+  return Promise.all([createdByUserQuery, publicChallengeQuery])
+    .then(([userChallenges, publicChallenges]) => {
+      if (userChallenges.empty && publicChallenges.empty) return [];
+
+
+      const userChallengesDocs = userChallenges.docs;
+      const publicChallengesDocs = publicChallenges.docs;
+
+      const challengesDocs = userChallengesDocs.concat(publicChallengesDocs);
+
+      const challenges = challengesDocs.map((challenge) => {
         const challengeValue = challenge.data();
         challengeValue.id = challenge.id;
 
@@ -178,7 +206,7 @@ async function increaseDayInChallengeEnrollment(challengeEnrollment: ChallengeEn
 function deleteEnrollment(enrollId: string) {
   if (!enrollId) throw new Error("do not have enroll id");
 
-  firestoreDb.collection("challengeEnrollments")
+  return firestoreDb.collection("challengeEnrollments")
     .doc(enrollId)
     .delete();
 }
@@ -221,6 +249,29 @@ function isNextDay(next: Date, current: Date) {
   
   return (date.getFullYear() === current.getFullYear()) && (date.getMonth() === current.getMonth()) && (date.getDate() === current.getDate());
 };
+
+export async function createNewChallenge(creationData: ChallengeCreation) {
+  return firestoreDb.collection("challenges")
+    .add(creationData)
+    .then(() => {
+      return true
+    }).catch(() => {
+      throw new Error("error creating challenge")
+
+    })
+}
+
+export async function deleteChallengeWithId(challengeId: string) {
+  return firestoreDb.collection("challenges")
+    .doc(challengeId)
+    .delete()
+    .then(() => {
+      return true
+    })
+    .catch(() => {
+      throw new Error("error deleting challenge")
+    })
+}
 
 export async function checkChallengeEnrollAndUpdate(challengeEnrollment: ChallengeEnrollment | null, challengeDays: number | null, user: UserDataProps) {
   if (!challengeDays || !challengeEnrollment) return;
@@ -272,5 +323,21 @@ export async function getUserChallengesCompleted(userEmail: string): Promise<Com
 
           return challengesFinishedInfos as CompletedChallenges[];
         })
+    })
+}
+
+export async function exitChallenge(challengeEnrollId: string, userEmail: string) {
+  await deleteEnrollment(challengeEnrollId)
+
+  return removeChallengeFromUser(userEmail);
+}
+
+export async function restartChallenge(challengeEnrollId: string) {
+  return firestoreDb.collection("challengeEnrollments")
+    .doc(challengeEnrollId)
+    .update({
+      currentDay: 1,
+      percentage: 0,
+      finished: false
     })
 }

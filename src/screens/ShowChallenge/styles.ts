@@ -159,5 +159,7 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.FONT_FAMILY.MEDIUM,
     fontSize: THEME.FONT_SIZE.SM,
     color: THEME.COLORS.GREY_TEXT,
-  }
+  },
+
+  
 });

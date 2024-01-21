@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   },
 
   menu: {
-    width: THEME.SIZES.SCREEN_WIDTH * 0.6,
+    width: THEME.SIZES.SCREEN_WIDTH * 0.75,
     height: THEME.SIZES.SCREEN_HEIGHT,
     backgroundColor: '#FFF',
     padding: 16,
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    width: THEME.SIZES.SCREEN_WIDTH * 0.6,
+    width: THEME.SIZES.SCREEN_WIDTH * 0.75,
     bottom: 20,
   },
 

@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
 import { FlatList, Text, TouchableOpacity, View, ActivityIndicator, RefreshControl, RefreshControlProps } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
-import FontAwesomeOri from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 import { styles } from './styles';
-import { Challenge, getExistentChallenges } from '../../service/challenges';
+import { Challenge } from '../../service/challenges';
 import { THEME } from '../../theme';
 
 interface ChallengeListProps {
