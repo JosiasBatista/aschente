@@ -15,7 +15,7 @@ export declare global {
       editProfile: undefined,
       createChallenge: undefined,
       challengeDifficultyAndTime: undefined,
-      editChallenge: undefined
+      editChallenge: { challenge: Challenge }
     }
   }
 }

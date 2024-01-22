@@ -68,7 +68,7 @@ export function EditOrDeleteChallenge({ challenge, challengeEnrollment }: EditOr
   }
 
   const navigateToEdition = () => {
-    navigation.navigate("editChallenge");
+    navigation.navigate("editChallenge", { challenge: challenge });
   }
 
   const isOwnedByUserAndPrivate = () => {

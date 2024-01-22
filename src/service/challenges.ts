@@ -341,3 +341,16 @@ export async function restartChallenge(challengeEnrollId: string) {
       finished: false
     })
 }
+
+export async function editChallenge(challenge: ChallengeCreation, challengeId: string) {
+  return new Promise((resolve, reject) => {
+    firestoreDb.collection("challenges")
+      .doc(challengeId)
+      .update(challenge)
+      .then(async () => {
+        const challengeUpdated = await getChallengeById(challengeId);
+
+        resolve(challengeUpdated)
+      }).catch(() => reject())
+  }) 
+}

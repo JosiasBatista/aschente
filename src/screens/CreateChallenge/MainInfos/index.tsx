@@ -8,39 +8,18 @@ import { Header } from '../../../components/Header';
 import { THEME } from '../../../theme';
 import { Button } from '../../../components/Button';
 import ChallengeCreationContext from '../../../context/ChallengeCreationContext';
+import { FormItem } from '../../../components/FormItem';
 
 export type ChallengeCreationProps = {
   title: string,
   description: string,
   isPublic: boolean,
-  activities: string[]
+  activities: string[],
+  days?: number,
+  difficulty?: string 
 }
 
 type ChallengeTypes = keyof ChallengeCreationProps
-
-interface FormItemProps {
-  label: string,
-  placeholder: string,
-  valueName: ChallengeTypes,
-  setValue: (fieldName: ChallengeTypes, value: string | boolean) => void,
-  numberOfLines?: number
-}
-
-const FormItem = ({label, placeholder, valueName, setValue, numberOfLines = 1}: FormItemProps) => {
-  return (
-    <View style={styles.formItemCont}>
-      <Text style={styles.formItemLabel}>{label}</Text>
-  
-      <TextInput
-        placeholder={placeholder}
-        style={[styles.input, numberOfLines > 1 ? {textAlignVertical: 'top'} : null]}
-        placeholderTextColor={THEME.COLORS.PLACEHOLDER}
-        onChangeText={(text) => setValue(valueName as ChallengeTypes, text)}
-        numberOfLines={numberOfLines}
-      />
-    </View>
-  )
-}
 
 export function MainChallengeInfos() {
   const { setChallenge } = useContext(ChallengeCreationContext);
